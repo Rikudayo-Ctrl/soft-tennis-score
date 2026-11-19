@@ -57,7 +57,11 @@
 </div>
 
 <div class="games-list">
-  <% @games.each do |game| %>
+  <% sorted_games = @games.sort_by { |game|
+       (game.p_result.present? || game.q_result.present?) ? 1 : 0
+     } %>
+
+  <% sorted_games.each do |game| %>
 
     <div class="game-card">
 
