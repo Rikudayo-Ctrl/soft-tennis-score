@@ -2,25 +2,27 @@ class MatchesController < ApplicationController
   before_action :set_match, only: %i[ show edit update destroy players ]
 
   # GET /matches or /matches.json
-  def index
-    @matches = Match.left_joins(:games).distinct
 
-    if params[:keyword].present?
-      keyword = "%#{params[:keyword]}%"
+def index
+  @matches = Match.left_joins(:games).distinct
 
-      @matches = @matches.where(
-        "matches.title LIKE :keyword OR
-        matches.date LIKE :keyword OR
-        games.p_school LIKE :keyword OR
-        games.q_school LIKE :keyword OR
-        games.p_front LIKE :keyword OR
-        games.p_back LIKE :keyword OR
-        games.q_front LIKE :keyword OR
-        games.q_back LIKE :keyword" ,
+  if params[:keyword].present?
+    keyword = "%#{params[:keyword].strip}%"
+
+    @matches = @matches.where(
+      "matches.title ILIKE :keyword OR
+       CAST(matches.date AS TEXT) ILIKE :keyword OR
+       games.p_school ILIKE :keyword OR
+       games.q_school ILIKE :keyword OR
+       games.p_front ILIKE :keyword OR
+       games.p_back ILIKE :keyword OR
+       games.q_front ILIKE :keyword OR
+       games.q_back ILIKE :keyword",
       keyword: keyword
-      ).distinct
-    end
+    ).distinct
   end
+end
+
   # GET /matches/1 or /matches/1.json
 
 def show
